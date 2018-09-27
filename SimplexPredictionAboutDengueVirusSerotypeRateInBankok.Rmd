@@ -1,0 +1,215 @@
+---
+title: "SimplexPredictionAboutDengueVirusSerotypeRateInBankok"
+output: github_document
+---
+
+```{r}
+library(openxlsx)
+library(rEDM)
+# Read the xlsx file.
+df_rate <- read.xlsx("/Users/ryogamisu/iGEM2018/Dengue-Prediction/denguevirus_infected_in_Bankok.xlsx", sheet = "Rate", rows = 1:28)
+df_rate_each <- df_rate[, c("DEN1_rate", "DEN2_rate", "DEN3_rate", "DEN4_rate")]
+Year <- df_rate[, "Year"]
+
+df_rate_each_simplex <- apply(df_rate_each, 2, simplex, stats_only = F, lib = c(1, 27), pred = c(1, 28), E = 2:6)
+```
+
+```{r}
+{plot(df_rate_each_simplex$DEN1_rate$rho, ylim = c(0, 1), col = "black", xlab = "E", ylab = "rho", type = "l", main = "rho about each data", sub = "Black:DEN1_rate, Red:DEN2_rate, Bule:Den3_rate, Green:DEN4_rate")
+lines(df_rate_each_simplex$DEN2_rate$rho, col = "red")
+lines(df_rate_each_simplex$DEN3_rate$rho, col = "blue")
+lines(df_rate_each_simplex$DEN4_rate$rho, col = "green")
+}
+```
+
+```{r}
+best_E_rate <- sapply(df_rate_each_simplex, function(df) {
+    df$E[which.max(df$rho)] 
+})
+
+{plot(df_rate_each_simplex$DEN1_rate$model_output[[best_E_rate["DEN1_rate"] - 1]]$obs, type = "l")
+lines(df_rate_each_simplex$DEN1_rate$model_output[[best_E_rate["DEN1_rate"] - 1]]$pred, type = "l", col = "red")
+plot(df_rate_each_simplex$DEN2_rate$model_output[[best_E_rate["DEN2_rate"] - 1]]$obs, type = "l")
+lines(df_rate_each_simplex$DEN2_rate$model_output[[best_E_rate["DEN2_rate"] - 1]]$pred, type = "l", col = "red")
+plot(df_rate_each_simplex$DEN3_rate$model_output[[best_E_rate["DEN3_rate"] - 1]]$obs, type = "l")
+lines(df_rate_each_simplex$DEN3_rate$model_output[[best_E_rate["DEN3_rate"] - 1]]$pred, type = "l", col = "red")
+plot(df_rate_each_simplex$DEN4_rate$model_output[[best_E_rate["DEN4_rate"] - 1]]$obs, type = "l")
+lines(df_rate_each_simplex$DEN4_rate$model_output[[best_E_rate["DEN4_rate"] - 1]]$pred, type = "l", col = "red")}
+```
+
+```{r}
+concatenated_12 <- c(df_rate_each$DEN1_rate, df_rate_each$DEN2_rate)
+lib_1 <- c(1, length(df_rate_each$DEN1_rate))
+lib_2 <- length(df_rate_each$DEN1_rate) + c(1, length(df_rate_each$DEN2_rate))
+
+simplex_out_1 <- simplex(concatenated_12, lib = lib_1, pred = lib_1, silent = TRUE)
+best_E_1 <- simplex_out_1$E[which.max(simplex_out_1$rho)]
+copred_1_to_2 <- simplex(concatenated_12, lib = lib_1, pred = lib_2, E = best_E_1)
+
+simplex_out_2 <- simplex(concatenated_12, lib = lib_2, pred = lib_2, silent = TRUE)
+best_E_2 <- simplex_out_2$E[which.max(simplex_out_2$rho)]
+copred_2_to_1 <- simplex(concatenated_12, lib = lib_2, pred = lib_1, E = best_E_2)
+
+groups <- c("prediction of 1 (from 1)", 
+            "coprediction of 1 (from 2)", 
+            "prediction of 2 (from 2)", 
+            "coprediction of 2 (from 1)")
+to_plot <- data.frame(label = factor(groups, levels = groups), 
+                      rbind(simplex_out_1[which.max(simplex_out_1$rho), ], 
+                            copred_2_to_1, 
+                            simplex_out_2[which.max(simplex_out_2$rho), ], 
+                            copred_1_to_2)
+)
+
+library(ggplot2)
+ggplot(to_plot, aes(x = label, y = rho)) + 
+    geom_col() + theme_bw() + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r}
+concatenated_23 <- c(df_rate_each$DEN2_rate, df_rate_each$DEN3_rate)
+lib_2 <- c(1, length(df_rate_each$DEN2_rate))
+lib_3 <- length(df_rate_each$DEN2_rate) + c(1, length(df_rate_each$DEN3_rate))
+
+simplex_out_2 <- simplex(concatenated_23, lib = lib_2, pred = lib_2, silent = TRUE)
+best_E_2 <- simplex_out_2$E[which.max(simplex_out_2$rho)]
+copred_2_to_3 <- simplex(concatenated_23, lib = lib_2, pred = lib_3, E = best_E_2)
+
+simplex_out_3 <- simplex(concatenated_23, lib = lib_3, pred = lib_3, silent = TRUE)
+best_E_3 <- simplex_out_3$E[which.max(simplex_out_3$rho)]
+copred_3_to_2 <- simplex(concatenated_23, lib = lib_3, pred = lib_2, E = best_E_3)
+
+groups <- c("prediction of 2 (from 2)", 
+            "coprediction of 2 (from 3)", 
+            "prediction of 3 (from 3)", 
+            "coprediction of 3 (from 2)")
+to_plot <- data.frame(label = factor(groups, levels = groups), 
+                      rbind(simplex_out_2[which.max(simplex_out_2$rho), ], 
+                            copred_3_to_2, 
+                            simplex_out_3[which.max(simplex_out_3$rho), ], 
+                            copred_2_to_3)
+)
+
+library(ggplot2)
+ggplot(to_plot, aes(x = label, y = rho)) + 
+    geom_col() + theme_bw() + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+```{r}
+concatenated_13 <- c(df_rate_each$DEN1_rate, df_rate_each$DEN3_rate)
+lib_1 <- c(1, length(df_rate_each$DEN1_rate))
+lib_3 <- length(df_rate_each$DEN1_rate) + c(1, length(df_rate_each$DEN3_rate))
+
+simplex_out_1 <- simplex(concatenated_13, lib = lib_1, pred = lib_1, silent = TRUE)
+best_E_1 <- simplex_out_1$E[which.max(simplex_out_1$rho)]
+copred_1_to_3 <- simplex(concatenated_13, lib = lib_1, pred = lib_3, E = best_E_1)
+
+simplex_out_3 <- simplex(concatenated_13, lib = lib_3, pred = lib_3, silent = TRUE)
+best_E_3 <- simplex_out_3$E[which.max(simplex_out_3$rho)]
+copred_3_to_1 <- simplex(concatenated_13, lib = lib_3, pred = lib_1, E = best_E_3)
+
+groups <- c("prediction of 1 (from 1)", 
+            "coprediction of 1 (from 3)", 
+            "prediction of 3 (from 3)", 
+            "coprediction of 3 (from 1)")
+to_plot <- data.frame(label = factor(groups, levels = groups), 
+                      rbind(simplex_out_1[which.max(simplex_out_1$rho), ], 
+                            copred_3_to_1, 
+                            simplex_out_3[which.max(simplex_out_3$rho), ], 
+                            copred_1_to_3)
+)
+
+library(ggplot2)
+ggplot(to_plot, aes(x = label, y = rho)) + 
+    geom_col() + theme_bw() + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r}
+concatenated_14 <- c(df_rate_each$DEN1_rate, df_rate_each$DEN4_rate)
+lib_1 <- c(1, length(df_rate_each$DEN1_rate))
+lib_4 <- length(df_rate_each$DEN1_rate) + c(1, length(df_rate_each$DEN4_rate))
+
+simplex_out_1 <- simplex(concatenated_14, lib = lib_1, pred = lib_1, silent = TRUE)
+best_E_1 <- simplex_out_1$E[which.max(simplex_out_1$rho)]
+copred_1_to_4 <- simplex(concatenated_14, lib = lib_1, pred = lib_4, E = best_E_1)
+
+simplex_out_4 <- simplex(concatenated_14, lib = lib_4, pred = lib_4, silent = TRUE)
+best_E_4 <- simplex_out_4$E[which.max(simplex_out_4$rho)]
+copred_4_to_1 <- simplex(concatenated_14, lib = lib_4, pred = lib_1, E = best_E_4)
+
+groups <- c("prediction of 1 (from 1)", 
+            "coprediction of 1 (from 4)", 
+            "prediction of 4 (from 4)", 
+            "coprediction of 4 (from 1)")
+to_plot <- data.frame(label = factor(groups, levels = groups), 
+                      rbind(simplex_out_1[which.max(simplex_out_1$rho), ], 
+                            copred_4_to_1, 
+                            simplex_out_4[which.max(simplex_out_4$rho), ], 
+                            copred_1_to_4)
+)
+
+library(ggplot2)
+ggplot(to_plot, aes(x = label, y = rho)) + 
+    geom_col() + theme_bw() + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+
+```{r}
+concatenated_24 <- c(df_rate_each$DEN2_rate, df_rate_each$DEN4_rate)
+lib_2 <- c(1, length(df_rate_each$DEN2_rate))
+lib_4 <- length(df_rate_each$DEN2_rate) + c(1, length(df_rate_each$DEN4_rate))
+
+simplex_out_2 <- simplex(concatenated_24, lib = lib_2, pred = lib_2, silent = TRUE)
+best_E_2 <- simplex_out_2$E[which.max(simplex_out_2$rho)]
+copred_2_to_4 <- simplex(concatenated_24, lib = lib_2, pred = lib_4, E = best_E_2)
+
+simplex_out_4 <- simplex(concatenated_24, lib = lib_4, pred = lib_4, silent = TRUE)
+best_E_4 <- simplex_out_4$E[which.max(simplex_out_4$rho)]
+copred_4_to_2 <- simplex(concatenated_24, lib = lib_4, pred = lib_2, E = best_E_4)
+
+groups <- c("prediction of 2 (from 2)", 
+            "coprediction of 2 (from 4)", 
+            "prediction of 4 (from 4)", 
+            "coprediction of 4 (from 2)")
+to_plot <- data.frame(label = factor(groups, levels = groups), 
+                      rbind(simplex_out_2[which.max(simplex_out_2$rho), ], 
+                            copred_4_to_2, 
+                            simplex_out_4[which.max(simplex_out_4$rho), ], 
+                            copred_2_to_4)
+)
+
+ggplot(to_plot, aes(x = label, y = rho)) + 
+    geom_col() + theme_bw() + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+```{r}
+concatenated_34 <- c(df_rate_each$DEN3_rate, df_rate_each$DEN4_rate)
+lib_3 <- c(1, length(df_rate_each$DEN3_rate))
+lib_4 <- length(df_rate_each$DEN3_rate) + c(1, length(df_rate_each$DEN4_rate))
+
+simplex_out_3 <- simplex(concatenated_34, lib = lib_3, pred = lib_3, silent = TRUE)
+best_E_3 <- simplex_out_3$E[which.max(simplex_out_3$rho)]
+copred_3_to_4 <- simplex(concatenated_34, lib = lib_3, pred = lib_4, E = best_E_3)
+
+simplex_out_4 <- simplex(concatenated_34, lib = lib_4, pred = lib_4, silent = TRUE)
+best_E_4 <- simplex_out_4$E[which.max(simplex_out_4$rho)]
+copred_4_to_3 <- simplex(concatenated_34, lib = lib_4, pred = lib_3, E = best_E_4)
+
+groups <- c("prediction of 3 (from 3)", 
+            "coprediction of 3 (from 4)", 
+            "prediction of 4 (from 4)", 
+            "coprediction of 4 (from 3)")
+to_plot <- data.frame(label = factor(groups, levels = groups), 
+                      rbind(simplex_out_3[which.max(simplex_out_3$rho), ], 
+                            copred_4_to_3, 
+                            simplex_out_4[which.max(simplex_out_4$rho), ], 
+                            copred_3_to_4)
+)
+ggplot(to_plot, aes(x = label, y = rho)) + 
+    geom_col() + theme_bw() + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
