@@ -1,0 +1,26 @@
+<div style="text-align:center;">
+  <h1 id="modeling">Modeling</h1>
+</div>
+<h1 id="abstract">Abstract</h1>
+<p>Characters only</p>
+<h1 id="introduction">Introduction</h1>
+<p>Dengue virus circulation and association with epidemics and severe dengue disease were studied in hospitalized children with suspected dengue at the Queen Sirikit National Institute of Child Health in Bangkok, Thailand, from 1973 to 1999.<br>We constructed a modeling predicts distribution of dengue viruses by using a mathematical method, Simplex Projection to distribution data of dengue viruses in Bangkok, Thailand, from 1973 to 1999.<br>Empirical dynamic modeling (EDM) is an emerging non-parametric framework for modeling
+nonlinear dynamic systems. EDM is based on the mathematical theory of
+reconstructing attractor manifolds from time series data (Takens 1981). The rEDM
+package collects several EDM methods, including simplex projection (Sugihara and
+May 1990), S-map (Sugihara 1994), multivariate embeddings (Dixon et al. 1999),
+convergent cross mapping (Sugihara et al. 2012), and multiview embedding (Ye and
+Sugihara 2016).</p>
+<h1 id="Prediction of serotype distribution of dengue virus serotypes in Thailand">
+  Prediction of serotype distribution of dengue virus serotypes in Thailand
+</h1>
+
+<h2 id="algorithm-of-simplex-projection">Algorithm of Simplex Projection</h2>
+<div style="text-align:center;">
+<a href="https://www.codecogs.com/eqnedit.php?latex=1:&space;\mathbf{procedure&space;}\&space;\mathrm{SimplexPrediction}
+(y,X,E,k,Tp)&space;\par&space;2:&space;\&space;\&space;\&space;\&space;N&space;\leftarrow&space;\mathrm{Nearneighbor}(y,&space;X,&space;k)&space;\par&space;3:&space;\&space;\&space;\&space;\&space;d&space;\leftarrow&space;\left&space;\|&space;X_{Ni}^{E}&space;-y&space;\right&space;\|&space;\par&space;4:&space;\&space;\&space;\&space;\&space;\mathbf{for}\&space;i=&space;1,...,k\&space;\mathbf{do}&space;\par&space;5:&space;\&space;\&space;\&space;\&space;\&space;\&space;\&space;\&space;w_{i}&space;\leftarrow&space;exp\left&space;(&space;\left&space;\|&space;X_{Ni}^{E}&space;-y&space;\right&space;\|&space;/&space;d&space;\right&space;)&space;\par&space;6:&space;\&space;\&space;\&space;\&space;\widehat{y}&space;\leftarrow&space;\sum_{i&space;=&space;1}^{k}\left&space;(&space;w_{i}X_{N_{i}&space;&plus;&space;T_{p}}&space;\right&space;)&space;/&space;\sum_{i&space;=&space;1}^{k}w_{i}\par&space;7:&space;\&space;\&space;\&space;\&space;return&space;\widehat{y}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?1:&space;\mathbf{procedure&space;}\&space;\mathrm{SimplexPrediction}(y,X,E,k,Tp)&space;\par&space;2:&space;\&space;\&space;\&space;\&space;N&space;\leftarrow&space;\mathrm{Nearneighbor}(y,&space;X,&space;k)&space;\par&space;3:&space;\&space;\&space;\&space;\&space;d&space;\leftarrow&space;\left&space;\|&space;X_{Ni}^{E}&space;-y&space;\right&space;\|&space;\par&space;4:&space;\&space;\&space;\&space;\&space;\mathbf{for}\&space;i=&space;1,...,k\&space;\mathbf{do}&space;\par&space;5:&space;\&space;\&space;\&space;\&space;\&space;\&space;\&space;\&space;w_{i}&space;\leftarrow&space;exp\left&space;(&space;\left&space;\|&space;X_{Ni}^{E}&space;-y&space;\right&space;\|&space;/&space;d&space;\right&space;)&space;\par&space;6:&space;\&space;\&space;\&space;\&space;\widehat{y}&space;\leftarrow&space;\sum_{i&space;=&space;1}^{k}\left&space;(&space;w_{i}X_{N_{i}&space;&plus;&space;T_{p}}&space;\right&space;)&space;/&space;\sum_{i&space;=&space;1}^{k}w_{i}\par&space;7:&space;\&space;\&space;\&space;\&space;return&space;\widehat{y}" title="1: \mathbf{procedure }\ \mathrm{SimplexPrediction}(y,X,E,k,Tp) \par 2: \ \ \ \ N \leftarrow \mathrm{Nearneighbor}(y, X, k) \par 3: \ \ \ \ d \leftarrow \left \| X_{Ni}^{E} -y \right \| \par 4: \ \ \ \ \mathbf{for}\ i= 1,...,k\ \mathbf{do} \par 5: \ \ \ \ \ \ \ \ w_{i} \leftarrow exp\left ( \left \| X_{Ni}^{E} -y \right \| / d \right ) \par 6: \ \ \ \ \widehat{y} \leftarrow \sum_{i = 1}^{k}\left ( w_{i}X_{N_{i} + T_{p}} \right ) / \sum_{i = 1}^{k}w_{i}\par 7: \ \ \ \ return \widehat{y}" /></a></div>
+
+<h2 id="co-prediction">Co-prediction</h2>
+<h1 id="discussion">Discussion</h1>
+<h1 id="references">References</h1>
+<p><a href="https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-algorithms.pdf">https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-algorithms.pdf</a></p>
