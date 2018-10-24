@@ -1,12 +1,17 @@
 ### setting of subject data
 subject_data <- "/Users/ryogamisu/iGEM2018/Dengue-Prediction/denguevirus_infected_in_Bankok.xlsx"
 subject_sheetname <- "Processed"
-subject_rows = 1:28 # A numeric vector specifying which rows in the subject data file to read. If NULL, all rows are read.
+
+# Include the colname
+subject_rows = 1:28 # A numeric vector specifying which rows in the subject data file to read.
 
 ### setting of climate data
 climate_data <- "/Users/ryogamisu/iGEM2018/Dengue-Prediction/Climate_BANGKOK.xlsx"
 climate_sheetname <- "Sheet1"
-climate_rows = 1:68
+
+# Include the colname
+climate_rows = 1:68 # A numeric vector specifying which rows in the subject data file to read.
+
 ### setting of colnamaes in your subject_data
 Time <- "Year"
 DEN1_subject <- "DEN1_Total"
