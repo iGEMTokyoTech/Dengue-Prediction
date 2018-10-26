@@ -71,15 +71,16 @@ library(rEDM)
 pdf("./plot/Prediction.pdf", width = 12, height = 6)
 current_dir <- getwd()
 df_subject <- openxlsx::read.xlsx(subject_data, rows = subject_rows, sheet = subject_sheetname)
+df_Time <-  df_subject[, Time]
 df_climate <- openxlsx::read.xlsx(climate_data, rows = climate_rows, sheet = climate_sheetname)
 df_climate <- df_climate[df_climate$Year %in% df_Time, ]
 
-df_Time <-  df_subject[, Time]
 df_subject_each <- df_subject[, c(DEN1_subject, DEN2_subject, DEN3_subject, DEN4_subject)]
 df_DEN_total <- df_subject[, DEN_total]
 df_DEN1234_total <- apply(X = df_subject_each, FUN = sum, MARGIN = 1)
+df_subject <- cbind(df_subject, df_DEN1234_total)
 df_rate <- df_subject_each / df_DEN1234_total
-
+colnames(df_rate) <- c("DEN1_ratio", "DEN2_ratio", "DEN3_ratio", "DEN4_ratio")
 
 df_subject_each_simplex <- apply(df_subject_each, 2, simplex, stats_only = F, lib = c(1, length(df_Time)), pred = c(1 , length(df_Time) + 1), E = 1:10)
 {plot(df_subject_each_simplex[[1]]$rho, ylim = c(0, 1), col = "black", xlab = "E", ylab = "rho", type = "l", main = "rho about each subject data", sub = "Black:DEN1_subject, Red:DEN2_subject, Bule:Den3_subject, Green:DEN4_subject")
@@ -121,5 +122,6 @@ best_E_rate <- sapply(df_rate_simplex, function(df) {
 {plot(c(df_rate[[4]], NA), type = "l", x = c(df_Time, df_Time[length(df_Time)] + 1), lwd = 2, xlab = "Time", ylab = "Ratio", main = "Changes in existence ratio type 4")
   lines(c(NA, df_rate_simplex[[4]]$model_output[[best_E_rate[4]]]$pred), lwd = 2, type = "l", col = "red", x =c(df_Time, df_Time[length(df_Time)] + 1))}
 
-co_pred_df(df_subject, df_climate, Time, "Copred_PatientsNum.pdf")
-o_pred_df(df_rate, df_climate, Time, "Copred_PatientsRate.pdf")
+co_pred_df(df_subject, df_climate, Time, "./plot/Copred_PatientsNum.pdf")
+co_pred_df(df_rate, df_climate, Time, "./plot/Copred_PatientsRate.pdf")
+dev.off()
