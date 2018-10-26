@@ -10,7 +10,7 @@ install.packages("rEDM")
 ## Analysis
 
 ```
-Rscript DenguePrediction.R
+Rscript DenguePrediction.R /path/to/ConfigFile
 ```
 
 ## Configure File
