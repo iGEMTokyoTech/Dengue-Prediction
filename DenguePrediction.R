@@ -63,8 +63,8 @@ co_pred_df<- function(df_dengue, df_climate, Time, pdf_name){
   }
   dev.off()
 }
-
-config_file <- "/Users/ryogamisu/iGEM2018/Dengue-Prediction/config.R"
+args<-commandArgs()
+config_file <- args[6]
 source(config_file)
 library(openxlsx)
 library(rEDM)
