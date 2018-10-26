@@ -25,8 +25,8 @@ co_prediction <- function(degue_series, climate_series, Time){
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 }
 
-co_pred_df<- function(df_dengue, df_climate, Time){
-  pdf("CopredWithClimate.pdf")
+co_pred_df<- function(df_dengue, df_climate, Time, pdf_name){
+  pdf(pdf_name, height = 6, width = 12)
   colnames_of_dengue <- colnames(df_dengue)
   colnames_of_dengue <- colnames_of_dengue[colnames_of_dengue != Time]
   colnames_of_climate <- colnames(df_climate)
@@ -58,7 +58,7 @@ co_pred_df<- function(df_dengue, df_climate, Time){
         theme(axis.text.x = element_text(angle = 90, hjust = 1))
       print(a)
       {plot(scale(dengue_series), x = df_Time, type = "l", lwd = 2, xlab = "Year", ylab = "Scaled", main = paste("Pred of ", i, "from ", k))
-        lines(copred_2_to_1$model_output[[1]]$pred, col = "red", type = "l", lwd = 2, x = df_Time)}
+        lines(c(NA, copred_2_to_1$model_output[[1]]$pred[-length(copred_2_to_1$model_output[[1]]$pred)]), col = "red", type = "l", lwd = 2, x = df_Time)}
     }
   }
   dev.off()
@@ -121,5 +121,5 @@ best_E_rate <- sapply(df_rate_simplex, function(df) {
 {plot(c(df_rate[[4]], NA), type = "l", x = c(df_Time, df_Time[length(df_Time)] + 1), lwd = 2, xlab = "Time", ylab = "Ratio", main = "Changes in existence ratio type 4")
   lines(c(NA, df_rate_simplex[[4]]$model_output[[best_E_rate[4]]]$pred), lwd = 2, type = "l", col = "red", x =c(df_Time, df_Time[length(df_Time)] + 1))}
 
-co_pred_df(df_subject, df_climate, Time)
-
+co_pred_df(df_subject, df_climate, Time, "Copred_PatientsNum.pdf")
+o_pred_df(df_rate, df_climate, Time, "Copred_PatientsRate.pdf")
