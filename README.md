@@ -10,7 +10,7 @@ install.packages("rEDM")
 ## Command
 
 ```
-Rscript DenguePrediction.R
+Rscript DenguePrediction.R /path/to/ConfigFile
 ```
 
 Result files are produced in `./plot`
