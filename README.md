@@ -7,11 +7,13 @@ install.packages("openxlsx")
 install.packages("rEDM")
 ```
 
-## Analysis
+## Command
 
 ```
 Rscript DenguePrediction.R
 ```
+
+Result files are produced in `./plot`
 
 ## Configure File
 ```config.R
