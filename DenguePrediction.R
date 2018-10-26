@@ -36,7 +36,7 @@ co_pred_df<- function(df_dengue, df_climate, Time, pdf_name){
       dengue_series <- df_dengue[, i]
       climate_series <- df_climate[, k]
       concatenated <- c(scale(dengue_series), scale(climate_series))
-      lib1 <- c(1, length(dengue_series))
+      lib1 <- c(1, length(dengue_series) + 1)
       lib2 <- length(dengue_series) + c(1, length(climate_series))
       
       simplex_out_1 <- simplex(concatenated, lib = lib1, pred = lib1, silent = TRUE, stats_only = F)
@@ -57,8 +57,8 @@ co_pred_df<- function(df_dengue, df_climate, Time, pdf_name){
         geom_col() + theme_bw() + 
         theme(axis.text.x = element_text(angle = 90, hjust = 1))
       print(a)
-      {plot(scale(dengue_series), x = df_Time, type = "l", lwd = 2, xlab = "Year", ylab = "Scaled", main = paste("Pred of ", i, "from ", k))
-        lines(c(NA, copred_2_to_1$model_output[[1]]$pred[-length(copred_2_to_1$model_output[[1]]$pred)]), col = "red", type = "l", lwd = 2, x = df_Time)}
+      {plot(c(scale(dengue_series), NA), x = c(df_Time, df_Time[length(df_Time)] + 1), type = "l", lwd = 2, xlab = "Year", ylab = "Scaled", main = paste("Pred of ", i, "from ", k))
+        lines(c(NA, copred_2_to_1$model_output[[1]]$pred[-length(copred_2_to_1$model_output[[1]]$pred)]), col = "red", type = "l", lwd = 2, x = c(df_Time, df_Time[length(df_Time)] + 1))}
     }
   }
   dev.off()
